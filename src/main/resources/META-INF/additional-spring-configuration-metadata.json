@@ -1,0 +1,40 @@
+{
+  "groups": [
+    {
+      "sourceType": "cn.msuno.swagger.spring.boot.autoconfigure.properties.SwaggerProperties",
+      "name": "随便乱取",
+      "type": "cn.msuno.swagger.spring.boot.autoconfigure.properties.SwaggerProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.swagger.basePackage",
+      "type": "java.lang.String",
+      "description": "Description for spring.swagger.basePackage."
+    },
+    {
+      "name": "spring.swagger.title",
+      "type": "java.lang.String",
+      "defaultValue": "平台系统接口详情",
+      "description": "title 如: 用户模块系统接口详情."
+    },
+    {
+      "name": "spring.swagger.description",
+      "type": "java.lang.String",
+      "defaultValue": "在线文档",
+      "description": "服务文件介绍."
+    },
+    {
+      "name": "spring.swagger.termsOfServiceUrl",
+      "type": "java.lang.String",
+      "defaultValue": "https://www.test.com/",
+      "description": "服务条款网址."
+    },
+    {
+      "name": "spring.swagger.version",
+      "type": "java.lang.String",
+      "defaultValue": "V1.0",
+      "description": "版本."
+    }
+  ]
+}
