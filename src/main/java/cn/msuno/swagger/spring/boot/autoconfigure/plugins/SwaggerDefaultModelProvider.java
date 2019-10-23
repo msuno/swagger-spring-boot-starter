@@ -22,6 +22,7 @@ import springfox.documentation.schema.ModelProperty;
 import springfox.documentation.schema.TypeNameExtractor;
 import springfox.documentation.schema.plugins.SchemaPluginsManager;
 import springfox.documentation.schema.property.ModelPropertiesProvider;
+import springfox.documentation.spi.schema.EnumTypeDeterminer;
 import springfox.documentation.spi.schema.contexts.ModelContext;
 
 @Component
@@ -35,9 +36,11 @@ public class SwaggerDefaultModelProvider extends DefaultModelProvider {
             @Qualifier("cachedModelProperties") ModelPropertiesProvider propertiesProvider,
             @Qualifier("cachedModelDependencies") ModelDependencyProvider dependencyProvider,
             SchemaPluginsManager schemaPluginsManager,
-            TypeNameExtractor typeNameExtractor) {
-        super(resolver, propertiesProvider, dependencyProvider, schemaPluginsManager, typeNameExtractor);
+            TypeNameExtractor typeNameExtractor, EnumTypeDeterminer enumTypeDeterminer) {
+        super(resolver, propertiesProvider, dependencyProvider, schemaPluginsManager, typeNameExtractor,
+                enumTypeDeterminer);
     }
+    
     
     @Override
     public Optional<Model> modelFor(ModelContext modelContext) {

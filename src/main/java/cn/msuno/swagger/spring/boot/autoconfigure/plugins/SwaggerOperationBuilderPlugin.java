@@ -31,6 +31,7 @@ public class SwaggerOperationBuilderPlugin extends SwaggerBuilderPlugin implemen
         String name = handler.getName();
         ClassJavadoc javadoc = getOrCreate(clz);
         Set<String> tagSet = new HashSet<>();
+        String summary = context.getName();
         for (OtherJavadoc other : javadoc.getOther()) {
             if ("tag".equals(other.getName())) {
                 tagSet.add(other.getComment().toString());
@@ -38,12 +39,17 @@ public class SwaggerOperationBuilderPlugin extends SwaggerBuilderPlugin implemen
         }
         context.operationBuilder().tags(newHashSet(tagSet));
         for (MethodJavadoc methodJavadoc : javadoc.getMethods()) {
-            if (name.equals(methodJavadoc.getName())) {
+            if (name.equals(methodJavadoc.getName()) && handler.getParameters().size() == methodJavadoc.getParams().size()) {
                 name = methodJavadoc.getComment().toString();
+                for (OtherJavadoc other : methodJavadoc.getOther()) {
+                    if ("summary".equals(other.getName())) {
+                        summary = other.getComment().toString();
+                    }
+                }
                 break;
             }
         }
-        context.operationBuilder().notes(name);
+        context.operationBuilder().summary(summary).notes(name);
     }
     
     @Override

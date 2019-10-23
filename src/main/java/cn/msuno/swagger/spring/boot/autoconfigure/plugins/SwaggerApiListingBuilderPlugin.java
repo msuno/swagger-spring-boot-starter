@@ -21,7 +21,7 @@ public class SwaggerApiListingBuilderPlugin extends SwaggerBuilderPlugin impleme
     
     @Override
     public void apply(ApiListingContext apiListingContext) {
-        Class<?> controllerClass = apiListingContext.getResourceGroup().getControllerClass();
+        Class<?> controllerClass = apiListingContext.getResourceGroup().getControllerClass().get();
         ClassJavadoc javadoc = getOrCreate(controllerClass);
         String description = javadoc.getComment().toString();
         Set<String> tagSet = new HashSet<>();

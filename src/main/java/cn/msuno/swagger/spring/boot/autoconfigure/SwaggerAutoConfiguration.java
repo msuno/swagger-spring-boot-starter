@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.plugin.core.PluginRegistry;
 
+import cn.msuno.swagger.spring.boot.autoconfigure.model.StatusCode;
 import cn.msuno.swagger.spring.boot.autoconfigure.properties.SwaggerProperties;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -62,6 +63,14 @@ public class SwaggerAutoConfiguration {
                 .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))
                 .paths(PathSelectors.any())
                 .build();
+    }
+    
+    @Bean
+    @ConditionalOnMissingBean(value = StatusCode.class)
+    public StatusCode statusCode() {
+        StatusCode code = new StatusCode();
+        code.put("200","success");
+        return code;
     }
     
 }

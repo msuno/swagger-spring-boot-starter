@@ -20,6 +20,8 @@ public class SwaggerProperties {
     
     private String version = "1.0.0";
     
+    private Class<?> clazz;
+    
     public String getBasePackage() {
         return basePackage;
     }
@@ -58,5 +60,13 @@ public class SwaggerProperties {
     
     public void setVersion(String version) {
         this.version = version;
+    }
+    
+    public Class<?> getClazz() {
+        return clazz;
+    }
+    
+    public void setClazz(Class<?> clazz) {
+        this.clazz = clazz;
     }
 }
