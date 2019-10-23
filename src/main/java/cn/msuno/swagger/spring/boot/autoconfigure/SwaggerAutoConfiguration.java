@@ -65,9 +65,7 @@ public class SwaggerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(value = StatusCode.class)
     public StatusCode statusCode() {
-        StatusCode code = new StatusCode();
-        code.put("200","success");
-        return code;
+        return new StatusCode();
     }
     
 }
