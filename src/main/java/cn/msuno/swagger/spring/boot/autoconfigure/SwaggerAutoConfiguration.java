@@ -23,9 +23,6 @@ import springfox.documentation.spring.web.readers.operation.OperationParameterRe
 /**
  * 配置swagger必要参数
  *
- * @annotation Configuration 配置类
- * @annotation EnableConfigurationProperties 使SwaggerProperties中@ConfigurationProperties生效
- * @annotation ComponentScan 扫描包
  * @author msuno
  * @version 1.0.0
  */
