@@ -37,6 +37,9 @@ public class SwaggerOperationBuilderPlugin extends SwaggerBuilderPlugin implemen
                 tagSet.add(other.getComment().toString());
             }
         }
+        if (tagSet.isEmpty()) {
+            tagSet.add(context.getGroupName());
+        }
         context.operationBuilder().tags(newHashSet(tagSet));
         for (MethodJavadoc methodJavadoc : javadoc.getMethods()) {
             if (name.equals(methodJavadoc.getName()) && handler.getParameters().size() == methodJavadoc.getParams().size()) {
