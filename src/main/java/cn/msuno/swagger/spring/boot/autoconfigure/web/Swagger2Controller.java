@@ -2,6 +2,8 @@ package cn.msuno.swagger.spring.boot.autoconfigure.web;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -22,7 +24,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 import cn.msuno.swagger.spring.boot.autoconfigure.mappers.ServiceModelToSwagger2Mapper;
-import cn.msuno.swagger.spring.boot.autoconfigure.model.StatusCode;
 import cn.msuno.swagger.spring.boot.autoconfigure.model.SwaggerVo;
 import io.swagger.models.Swagger;
 import springfox.documentation.annotations.ApiIgnore;
@@ -45,7 +46,7 @@ public class Swagger2Controller {
     private final DocumentationCache documentationCache;
     private final ServiceModelToSwagger2Mapper mapper;
     private final JsonSerializer jsonSerializer;
-    private final StatusCode statusCode;
+    private final Map<String, String> statusCode;
     
     @Autowired
     public Swagger2Controller(
@@ -53,7 +54,7 @@ public class Swagger2Controller {
             DocumentationCache documentationCache,
             ServiceModelToSwagger2Mapper mapper,
             JsonSerializer jsonSerializer,
-            StatusCode statusCode) {
+            Map<String, String> statusCode) {
         
         this.hostNameOverride =
                 environment.getProperty(

@@ -1,5 +1,7 @@
 package cn.msuno.swagger.spring.boot.autoconfigure.configuration;
 
+import java.util.Map;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -9,7 +11,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.HandlerMapping;
 
 import cn.msuno.swagger.spring.boot.autoconfigure.mappers.ServiceModelToSwagger2Mapper;
-import cn.msuno.swagger.spring.boot.autoconfigure.model.StatusCode;
 import cn.msuno.swagger.spring.boot.autoconfigure.properties.Swagger2JacksonModule;
 import cn.msuno.swagger.spring.boot.autoconfigure.web.Swagger2Controller;
 import springfox.documentation.spring.web.DocumentationCache;
@@ -37,7 +38,7 @@ public class SwaggerDocumentationConfiguration {
             DocumentationCache documentationCache,
             ServiceModelToSwagger2Mapper mapper,
             JsonSerializer jsonSerializer,
-            StatusCode statusCode) {
+            Map<String, String> statusCode) {
         return new PropertySourcedRequestMappingHandlerMapping(
                 environment,
                 new Swagger2Controller(environment, documentationCache, mapper, jsonSerializer, statusCode));

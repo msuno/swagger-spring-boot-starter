@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.swagger")
 public class SwaggerProperties {
     
-    private String basePackage;
+    private String basePackage = "cn.msuno.starter";
     
     private String title = "msuno";
     

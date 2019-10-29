@@ -1,5 +1,8 @@
 package cn.msuno.swagger.spring.boot.autoconfigure;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +14,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.plugin.core.PluginRegistry;
 
-import cn.msuno.swagger.spring.boot.autoconfigure.model.StatusCode;
 import cn.msuno.swagger.spring.boot.autoconfigure.properties.SwaggerProperties;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -47,7 +49,7 @@ public class SwaggerAutoConfiguration {
      * @return Docket.class
      */
     @Bean
-    @ConditionalOnMissingBean(Docket.class)
+    @ConditionalOnMissingBean(name = "docket")
     public Docket createDocket() {
         log.info("auto config swagger");
         return new Docket(DocumentationType.SWAGGER_2)
@@ -63,9 +65,9 @@ public class SwaggerAutoConfiguration {
     }
     
     @Bean
-    @ConditionalOnMissingBean(value = StatusCode.class)
-    public StatusCode statusCode() {
-        return new StatusCode();
+    @ConditionalOnMissingBean(name = "statusCode")
+    public Map<String, String> statusCode() {
+        return new HashMap<>();
     }
     
 }
