@@ -1,8 +1,13 @@
 package cn.msuno.swagger.spring.boot.autoconfigure;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +20,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.plugin.core.PluginRegistry;
 
 import cn.msuno.swagger.spring.boot.autoconfigure.properties.SwaggerProperties;
+import springfox.documentation.PathProvider;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.paths.RelativePathProvider;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.spring.web.readers.operation.OperationParameterReader;
 
@@ -31,7 +38,9 @@ import springfox.documentation.spring.web.readers.operation.OperationParameterRe
 @Configuration
 @EnableConfigurationProperties(SwaggerProperties.class)
 @ComponentScan(basePackages = {
-        "cn.msuno.swagger.spring.boot.autoconfigure"
+        "cn.msuno.swagger.spring.boot.autoconfigure.plugins",
+        "cn.msuno.swagger.spring.boot.autoconfigure.web",
+        "cn.msuno.swagger.spring.boot.autoconfigure.configuration"
 })
 @ConditionalOnClass(value = {PluginRegistry.class, OperationParameterReader.class})
 public class SwaggerAutoConfiguration {
@@ -44,6 +53,9 @@ public class SwaggerAutoConfiguration {
     @Autowired
     private SwaggerProperties swaggerProperties;
    
+    @Autowired
+    ServletContext servletContext;
+    
     /**
      * 如果用户没有配置Docket，定义一个默认Docket
      * @return Docket.class
@@ -55,9 +67,28 @@ public class SwaggerAutoConfiguration {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder().title(swaggerProperties.getTitle())
                         .description(swaggerProperties.getDescription())
-                        .termsOfServiceUrl(swaggerProperties.getTermsOfServiceUrl())
+                        .termsOfServiceUrl(swaggerProperties.getTermsOfService())
                         .version(swaggerProperties.getVersion())
+                        .contact(swaggerProperties.getContact())
+                        .license(swaggerProperties.getLicense())
                         .build())
+                .pathProvider(new RelativePathProvider(servletContext){
+                    @Override
+                    protected String applicationPath() {
+                        if (StringUtils.isNotBlank(swaggerProperties.getBasePackage())) {
+                            return swaggerProperties.getBasePackage();
+                        }
+                        return super.applicationPath();
+                    }
+    
+                    @Override
+                    protected String getDocumentationPath() {
+                        if (StringUtils.isNotBlank(swaggerProperties.getBasePackage())) {
+                            return swaggerProperties.getBasePackage();
+                        }
+                        return super.getDocumentationPath();
+                    }
+                })
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))
                 .paths(PathSelectors.any())

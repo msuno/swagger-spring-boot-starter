@@ -1,7 +1,5 @@
 package cn.msuno.swagger.spring.boot.autoconfigure.configuration;
 
-import static springfox.documentation.schema.ClassSupport.classByName;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,12 +22,9 @@ import springfox.documentation.swagger.web.SwaggerResourcesProvider;
 @Component
 @Primary
 public class SwaggerResourcesConfigProvider implements SwaggerResourcesProvider {
-    private final String swagger1Url;
-    private final String swagger2Url;
+    private final String swaggerUrl;
     @VisibleForTesting
-    boolean swagger1Available;
-    @VisibleForTesting
-    boolean swagger2Available;
+    boolean swaggerAvailable;
     
     private final DocumentationCache documentationCache;
     
@@ -37,10 +32,8 @@ public class SwaggerResourcesConfigProvider implements SwaggerResourcesProvider 
     public SwaggerResourcesConfigProvider(
             Environment environment,
             DocumentationCache documentationCache) {
-        swagger1Url = environment.getProperty("springfox.documentation.swagger.v1.path", "/api-docs");
-        swagger2Url = environment.getProperty("springfox.documentation.swagger.v2.path", "/v2/api-docs");
-        swagger1Available = classByName("springfox.documentation.swagger1.web.Swagger1Controller").isPresent();
-        swagger2Available = true;
+        swaggerUrl = environment.getProperty("swagger.api.url", "/v2/api-docs");
+        swaggerAvailable = true;
         this.documentationCache = documentationCache;
     }
     
@@ -50,14 +43,8 @@ public class SwaggerResourcesConfigProvider implements SwaggerResourcesProvider 
         
         for (Map.Entry<String, Documentation> entry : documentationCache.all().entrySet()) {
             String swaggerGroup = entry.getKey();
-            if (swagger1Available) {
-                SwaggerResource swaggerResource = resource(swaggerGroup, swagger1Url);
-                swaggerResource.setSwaggerVersion("1.2");
-                resources.add(swaggerResource);
-            }
-            
-            if (swagger2Available) {
-                SwaggerResource swaggerResource = resource(swaggerGroup, swagger2Url);
+            if (swaggerAvailable) {
+                SwaggerResource swaggerResource = resource(swaggerGroup, swaggerUrl);
                 swaggerResource.setSwaggerVersion("2.0");
                 resources.add(swaggerResource);
             }

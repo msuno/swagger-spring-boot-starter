@@ -2,39 +2,82 @@
   "groups": [
     {
       "sourceType": "cn.msuno.swagger.spring.boot.autoconfigure.properties.SwaggerProperties",
-      "name": "随便乱取",
+      "name": "Javadoc swagger api",
       "type": "cn.msuno.swagger.spring.boot.autoconfigure.properties.SwaggerProperties"
     }
   ],
   "properties": [
     {
-      "name": "spring.swagger.basePackage",
+      "name": "spring.swagger.host",
       "type": "java.lang.String",
-      "description": "Description for spring.swagger.basePackage."
+      "defaultValue": "http://localhost:8080",
+      "description": "swagger Api Host."
     },
     {
-      "name": "spring.swagger.title",
+      "name": "spring.swagger.basePackage",
       "type": "java.lang.String",
-      "defaultValue": "平台系统接口详情",
-      "description": "title 如: 用户模块系统接口详情."
+      "defaultValue": "cn.msuno",
+      "description": "swagger Api basePackage."
+    },
+    {
+      "name": "spring.swagger.basePath",
+      "type": "java.lang.String",
+      "defaultValue": "/",
+      "description": "Request Url Base Path."
     },
     {
       "name": "spring.swagger.description",
       "type": "java.lang.String",
-      "defaultValue": "在线文档",
-      "description": "服务文件介绍."
-    },
-    {
-      "name": "spring.swagger.termsOfServiceUrl",
-      "type": "java.lang.String",
-      "defaultValue": "https://www.test.com/",
-      "description": "服务条款网址."
+      "defaultValue": "swagger API",
+      "description": "swagger api description."
     },
     {
       "name": "spring.swagger.version",
       "type": "java.lang.String",
-      "defaultValue": "V1.0",
-      "description": "版本."
+      "defaultValue": "3.0",
+      "description": "swagger api version."
+    },
+    {
+      "name": "spring.swagger.title",
+      "type": "java.lang.String",
+      "defaultValue": "swagger API",
+      "description": "swagger api title."
+    },
+    {
+      "name": "spring.swagger.termsOfService",
+      "type": "java.lang.String",
+      "defaultValue": "https://www.msuno.cn",
+      "description": "swagger api termsOfService."
+    },
+    {
+      "name": "spring.swagger.contact.name",
+      "type": "java.lang.String",
+      "defaultValue": "msuno",
+      "description": "swagger api contact name."
+    },
+    {
+      "name": "spring.swagger.contact.url",
+      "type": "java.lang.String",
+      "defaultValue": "https://www.msuno.cn",
+      "description": "swagger api contact url."
+    },
+    {
+      "name": "spring.swagger.contact.email",
+      "type": "java.lang.String",
+      "defaultValue": "msuno@msuno.cn",
+      "description": "swagger api contact email."
+    },
+    {
+      "name": "spring.swagger.license.name",
+      "type": "java.lang.String",
+      "defaultValue": "msuno",
+      "description": "swagger api license name."
+    },
+    {
+      "name": "spring.swagger.license.url",
+      "type": "java.lang.String",
+      "defaultValue": "https://www.msuno.cn",
+      "description": "swagger api license url."
     }
   ]
 }
