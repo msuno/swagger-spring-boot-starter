@@ -42,7 +42,8 @@ public class SwaggerOperationBuilderPlugin extends SwaggerBuilderPlugin implemen
         }
         context.operationBuilder().tags(newHashSet(tagSet));
         for (MethodJavadoc methodJavadoc : javadoc.getMethods()) {
-            if (name.equals(methodJavadoc.getName()) && handler.getParameters().size() == methodJavadoc.getParams().size()) {
+            if (name.equals(methodJavadoc.getName()) &&
+                    (handler.getParameters().size() == methodJavadoc.getParams().size() || handler.getParameters().isEmpty())) {
                 name = methodJavadoc.getComment().toString();
                 for (OtherJavadoc other : methodJavadoc.getOther()) {
                     if ("summary".equals(other.getName())) {

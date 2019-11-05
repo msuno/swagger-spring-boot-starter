@@ -75,16 +75,16 @@ public class SwaggerAutoConfiguration {
                 .pathProvider(new RelativePathProvider(servletContext){
                     @Override
                     protected String applicationPath() {
-                        if (StringUtils.isNotBlank(swaggerProperties.getBasePackage())) {
-                            return swaggerProperties.getBasePackage();
+                        if (StringUtils.isNotBlank(swaggerProperties.getBasePath())) {
+                            return swaggerProperties.getBasePath();
                         }
                         return super.applicationPath();
                     }
     
                     @Override
                     protected String getDocumentationPath() {
-                        if (StringUtils.isNotBlank(swaggerProperties.getBasePackage())) {
-                            return swaggerProperties.getBasePackage();
+                        if (StringUtils.isNotBlank(swaggerProperties.getBasePath())) {
+                            return swaggerProperties.getBasePath();
                         }
                         return super.getDocumentationPath();
                     }
