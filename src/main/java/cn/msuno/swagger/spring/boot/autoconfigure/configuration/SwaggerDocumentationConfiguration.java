@@ -5,9 +5,9 @@ import java.util.Map;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
 
 import cn.msuno.swagger.spring.boot.autoconfigure.mappers.ServiceModelToSwagger2Mapper;
@@ -20,7 +20,7 @@ import springfox.documentation.spring.web.json.JacksonModuleRegistrar;
 import springfox.documentation.spring.web.json.JsonSerializer;
 import springfox.documentation.swagger.configuration.SwaggerCommonConfiguration;
 
-@Configuration
+@Component
 @Import({ SpringfoxWebMvcConfiguration.class, SwaggerCommonConfiguration.class })
 @ComponentScan(basePackages = {
         "cn.msuno.swagger.spring.boot.autoconfigure.mappers"
@@ -38,9 +38,9 @@ public class SwaggerDocumentationConfiguration {
             DocumentationCache documentationCache,
             ServiceModelToSwagger2Mapper mapper,
             JsonSerializer jsonSerializer,
-            Map<String, String> statusCode) {
+            Map<String, String> responseCode) {
         return new PropertySourcedRequestMappingHandlerMapping(
                 environment,
-                new Swagger2Controller(environment, documentationCache, mapper, jsonSerializer, statusCode));
+                new Swagger2Controller(environment, documentationCache, mapper, jsonSerializer, responseCode));
     }
 }

@@ -15,6 +15,7 @@ import com.google.common.base.Optional;
 
 import cn.msuno.javadoc.docs.ClassJavadoc;
 import cn.msuno.javadoc.docs.FieldJavadoc;
+import cn.msuno.javadoc.docs.OtherJavadoc;
 import springfox.documentation.schema.DefaultModelProvider;
 import springfox.documentation.schema.Model;
 import springfox.documentation.schema.ModelDependencyProvider;
@@ -62,7 +63,21 @@ public class SwaggerDefaultModelProvider extends DefaultModelProvider {
             for (Map.Entry<String, ModelProperty> kv : properties.entrySet()) {
                 for (FieldJavadoc fieldJavadoc : javadoc.getFields()) {
                     if (fieldJavadoc.getName().equals(kv.getKey())) {
-                        updateField(kv.getValue(), "description", fieldJavadoc.getComment().toString());
+                        updateField(kv.getValue(), "description", fieldJavadoc.getComment()
+                                .toString().trim().replaceAll("\n", ""));
+                        for (OtherJavadoc oj : fieldJavadoc.getOther()) {
+                            if ("required".equals(oj.getName())) {
+                                boolean require = false;
+                                if (oj.getName().trim().replaceAll("\n", "").equals("true")) {
+                                    require = Boolean.parseBoolean(oj.getName());
+                                }
+                                updateField(kv.getValue(), "required", require);
+                            }
+                            if ("default".equals(oj.getName())) {
+                                updateField(kv.getValue(), "defaultValue", oj.getComment()
+                                        .toString().trim().replaceAll("\n", ""));
+                            }
+                        }
                     }
                 }
             }
@@ -75,7 +90,7 @@ public class SwaggerDefaultModelProvider extends DefaultModelProvider {
         return super.dependencies(modelContext);
     }
     
-    private void updateField(Object obj, String key, String value) {
+    private void updateField(Object obj, String key, Object value) {
         Class<?> clz = obj.getClass();
         Field[] fields = clz.getDeclaredFields();
         for (Field field : fields) {

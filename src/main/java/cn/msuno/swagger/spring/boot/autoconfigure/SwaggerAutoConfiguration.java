@@ -1,8 +1,8 @@
 package cn.msuno.swagger.spring.boot.autoconfigure;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -13,17 +13,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.plugin.core.PluginRegistry;
+import org.springframework.stereotype.Component;
 
 import cn.msuno.swagger.spring.boot.autoconfigure.properties.SwaggerProperties;
-import springfox.documentation.PathProvider;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.Parameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.paths.RelativePathProvider;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -35,7 +36,7 @@ import springfox.documentation.spring.web.readers.operation.OperationParameterRe
  * @author msuno
  * @version 1.0.0
  */
-@Configuration
+@Component
 @EnableConfigurationProperties(SwaggerProperties.class)
 @ComponentScan(basePackages = {
         "cn.msuno.swagger.spring.boot.autoconfigure.plugins",
@@ -43,6 +44,7 @@ import springfox.documentation.spring.web.readers.operation.OperationParameterRe
         "cn.msuno.swagger.spring.boot.autoconfigure.configuration"
 })
 @ConditionalOnClass(value = {PluginRegistry.class, OperationParameterReader.class})
+@ConditionalOnWebApplication
 public class SwaggerAutoConfiguration {
     
     private static Logger log = LoggerFactory.getLogger(SwaggerAutoConfiguration.class);
@@ -65,6 +67,8 @@ public class SwaggerAutoConfiguration {
     public Docket createDocket() {
         log.info("auto config swagger");
         return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("msuno")
+                .enable(swaggerProperties.isEnable())
                 .apiInfo(new ApiInfoBuilder().title(swaggerProperties.getTitle())
                         .description(swaggerProperties.getDescription())
                         .termsOfServiceUrl(swaggerProperties.getTermsOfService())
@@ -92,13 +96,19 @@ public class SwaggerAutoConfiguration {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .globalOperationParameters(globalParameters());
     }
     
     @Bean
-    @ConditionalOnMissingBean(name = "statusCode")
-    public Map<String, String> statusCode() {
+    @ConditionalOnMissingBean(name = "responseCode")
+    public Map<String, String> responseCode() {
         return new HashMap<>();
     }
-    
+
+    @Bean
+    @ConditionalOnMissingBean(name = "globalParameters")
+    public List<Parameter> globalParameters() {
+        return new ArrayList<>();
+    }
 }

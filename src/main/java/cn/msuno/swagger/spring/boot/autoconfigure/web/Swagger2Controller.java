@@ -46,7 +46,7 @@ public class Swagger2Controller {
     private final DocumentationCache documentationCache;
     private final ServiceModelToSwagger2Mapper mapper;
     private final JsonSerializer jsonSerializer;
-    private final Map<String, String> statusCode;
+    private final Map<String, String> responseCode;
     
     @Autowired
     public Swagger2Controller(
@@ -54,7 +54,7 @@ public class Swagger2Controller {
             DocumentationCache documentationCache,
             ServiceModelToSwagger2Mapper mapper,
             JsonSerializer jsonSerializer,
-            Map<String, String> statusCode) {
+            Map<String, String> responseCode) {
         
         this.hostNameOverride =
                 environment.getProperty(
@@ -63,7 +63,7 @@ public class Swagger2Controller {
         this.documentationCache = documentationCache;
         this.mapper = mapper;
         this.jsonSerializer = jsonSerializer;
-        this.statusCode = statusCode;
+        this.responseCode = responseCode;
     }
     
     @RequestMapping(
@@ -90,8 +90,9 @@ public class Swagger2Controller {
         if (isNullOrEmpty(swagger.getHost())) {
             swagger.host(hostName(uriComponents));
         }
+        //extend(swagger);
         SwaggerVo vo = new SwaggerVo(swagger);
-        vo.setStatusCode(statusCode);
+        vo.setStatusCode(responseCode);
         return new ResponseEntity<Json>(jsonSerializer.toJson(vo), HttpStatus.OK);
     }
     

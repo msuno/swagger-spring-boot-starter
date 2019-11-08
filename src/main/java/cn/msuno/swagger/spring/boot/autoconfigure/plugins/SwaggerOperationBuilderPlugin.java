@@ -22,7 +22,7 @@ import springfox.documentation.spi.service.contexts.OperationContext;
 @Primary
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SwaggerOperationBuilderPlugin extends SwaggerBuilderPlugin implements OperationBuilderPlugin {
-    
+
     @Override
     public void apply(OperationContext context) {
         Object requestContext = readValue(context, "requestContext");
@@ -43,7 +43,7 @@ public class SwaggerOperationBuilderPlugin extends SwaggerBuilderPlugin implemen
         context.operationBuilder().tags(newHashSet(tagSet));
         for (MethodJavadoc methodJavadoc : javadoc.getMethods()) {
             if (name.equals(methodJavadoc.getName()) &&
-                    (handler.getParameters().size() == methodJavadoc.getParams().size() || handler.getParameters().isEmpty())) {
+                    (handler.getParameters().size() == methodJavadoc.getParams().size() || methodJavadoc.getParams().isEmpty())) {
                 name = methodJavadoc.getComment().toString();
                 for (OtherJavadoc other : methodJavadoc.getOther()) {
                     if ("summary".equals(other.getName())) {

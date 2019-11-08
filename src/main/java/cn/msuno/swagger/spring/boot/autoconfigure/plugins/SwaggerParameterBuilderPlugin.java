@@ -2,6 +2,7 @@ package cn.msuno.swagger.spring.boot.autoconfigure.plugins;
 
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -30,19 +31,34 @@ public class SwaggerParameterBuilderPlugin extends SwaggerBuilderPlugin implemen
             return ;
         }
         String description = parameterName;
+        boolean required = false;
+        String defaultValue = "";
         for (MethodJavadoc methodJavadoc : javadoc.getMethods()) {
             if (name.equals(methodJavadoc.getName())) {
                 for (ParamJavadoc paramJavadoc : methodJavadoc.getParams()){
                     if (parameterName.equals(paramJavadoc.getName())) {
                         parameterName = paramJavadoc.getName();
-                        description = paramJavadoc.getComment().toString();
-                        break;
+                        String string = paramJavadoc.getComment().toString();
+                        if (StringUtils.isBlank(string)){
+                            break;
+                        }
+                        String[] split = string.split("\\s+");
+                        description = split[0];
+                        for (int i = 1 ; i < split.length ; i ++) {
+                            if ("required".equals(split[i])) {
+                                required = true;
+                            }
+                            if (split[i].startsWith("e_")) {
+                                defaultValue = split[i].replace("e_", "");
+                            }
+                        }
                     }
                 }
                 break;
             }
         }
-        parameterContext.parameterBuilder().name(parameterName).description(description);
+        parameterContext.parameterBuilder().name(parameterName).description(description)
+                .required(required).defaultValue(defaultValue);
     }
     
     @Override

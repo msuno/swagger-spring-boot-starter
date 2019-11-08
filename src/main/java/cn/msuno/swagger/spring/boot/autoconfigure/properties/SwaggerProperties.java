@@ -22,6 +22,7 @@ public class SwaggerProperties {
     private String basePackage = "cn.msuno";
     private Contact contact = new Contact("msuno", "https://www.msuno.cn", "msuno@msuno.cn");
     private String license = "https://www.msuno.cn";
+    private boolean enable = true;
     
     private Class<?> clazz;
     
@@ -111,5 +112,13 @@ public class SwaggerProperties {
     
     public void setBasePackage(String basePackage) {
         this.basePackage = basePackage;
+    }
+    
+    public boolean isEnable() {
+        return enable;
+    }
+    
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 }
