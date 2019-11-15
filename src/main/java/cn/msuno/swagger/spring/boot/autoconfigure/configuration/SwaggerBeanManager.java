@@ -31,6 +31,7 @@ public class SwaggerBeanManager implements SmartLifecycle, ApplicationContextAwa
         beanFactory.removeBeanDefinition("operationDeprecatedReader");
         beanFactory.removeBeanDefinition("swaggerParameterDescriptionReader");
         beanFactory.removeBeanDefinition("parameterNameReader");
+        beanFactory.removeBeanDefinition("expandedParameterBuilder");
     }
     
     @Override
