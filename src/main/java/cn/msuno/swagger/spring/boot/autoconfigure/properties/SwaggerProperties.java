@@ -18,10 +18,10 @@ public class SwaggerProperties {
     private String basePath = "/";
     private String description = "RESTFUL API";
     private String version = "3.0";
-    private String termsOfService = "https://www.msuno.cn";
+    private String termsOfService = "https://github.com/msuno/swagger-spring-boot-starter";
     private String basePackage = "cn.msuno";
-    private Contact contact = new Contact("msuno", "https://www.msuno.cn", "msuno@msuno.cn");
-    private String license = "https://www.msuno.cn";
+    private Contact contact = new Contact("msuno", "https://github.com/msuno/swagger-spring-boot-starter", "mshunwei@outlook.com");
+    private String license = "https://github.com/msuno/swagger-spring-boot-starter";
     private boolean enable = true;
     
     private Class<?> clazz;
