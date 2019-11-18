@@ -1,6 +1,8 @@
 package cn.msuno.swagger.spring.boot.autoconfigure.plugins;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -48,11 +50,13 @@ public class SwaggerDefaultModelProvider extends DefaultModelProvider {
         Optional<Model> modelOptional = super.modelFor(modelContext);
         ClassJavadoc javadoc = null;
         Model model = null;
+        List<FieldJavadoc> javadocAll = new ArrayList<>();
         if (modelOptional.isPresent()) {
             model = modelOptional.get();
             try {
                 Class<?> aClass = Class.forName(model.getQualifiedType());
                 javadoc = SwaggerBuilderPlugin.getOrCreate(aClass);
+                javadocList(javadocAll, aClass);
             } catch (ClassNotFoundException e) {
                 logger.info("get class error {}", e.getMessage());
             }
@@ -61,7 +65,7 @@ public class SwaggerDefaultModelProvider extends DefaultModelProvider {
             updateField(model, "description", javadoc.getComment().toString());
             Map<String, ModelProperty> properties = model.getProperties();
             for (Map.Entry<String, ModelProperty> kv : properties.entrySet()) {
-                for (FieldJavadoc fieldJavadoc : javadoc.getFields()) {
+                for (FieldJavadoc fieldJavadoc : javadocAll) {
                     if (fieldJavadoc.getName().equals(kv.getKey())) {
                         updateField(kv.getValue(), "description", fieldJavadoc.getComment()
                                 .toString().trim().replaceAll("\n", ""));
@@ -83,6 +87,16 @@ public class SwaggerDefaultModelProvider extends DefaultModelProvider {
             }
         }
         return modelOptional;
+    }
+    
+    private void javadocList(List<FieldJavadoc> javadocList, Class<?> clz) {
+        ClassJavadoc javadoc = SwaggerBuilderPlugin.getOrCreate(clz);
+        if (null != javadoc) {
+            javadocList.addAll(javadoc.getFields());
+        }
+        if (null != clz.getSuperclass()) {
+            javadocList(javadocList, clz.getSuperclass());
+        }
     }
     
     @Override
