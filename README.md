@@ -5,7 +5,7 @@
 <dependency>
     <groupId>cn.msuno</groupId>
     <artifactId>swagger-spring-boot-starter</artifactId>
-    <version>2.5.0</version>
+    <version>2.5.1</version>
 </dependency>
 ```
 
@@ -96,3 +96,4 @@ public class Swagger2  {
      }
 }
 ```
+

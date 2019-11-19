@@ -69,7 +69,7 @@
 	</div>
 	<div class="sbu-header-left" style="width: 410px;">
 		<i class="iconfont icon-zuosuojin1" style="font-size: 1.5em;margin-left: 10px;" id="leftCheck" data-display="0"></i>
-		<span><a href="javascript:;">API文档</a></span>
+		<span><a href="javascript:;" id="apiTitle">API文档</a></span>
 	</div>
 	<div class="sbu-header-right">
 		<div class="form-group sbu-header-group">
@@ -141,8 +141,11 @@
 		</div>
 		<div class="input-inline" style="margin-bottom:10px;">
 			<button class="btn btn-primary" type="button" id="btnCopy">拷贝文档</button>
+			<button class="btn btn-primary" type="button" id="btnView">查看效果</button>
+			<button class="btn btn-primary" type="button" id="btnMarkdown">Markdown</button>
 		</div>
-		<div class='input-inline'>
+		<div class="swbu-main" itemprop="articleBody">
+			<div id="txtOffLineDocText"></div>
             <textarea class='form-control' style='width: 100%;height: 100%;' id="txtOffLineDoc">
 # 简介
 
@@ -154,74 +157,79 @@
 
 **联系人**:{{contact}}
 
-**接口路径**：{{location}}
-<% for( i = 0; i < tags.length; i++) { var tag=tags[i] ; %># <%= tag.name %><% for( j = 0; j < paths.length; j++) {var path=paths[j]; if(path.tags.indexOf(tag.name)>-1){ %>
+
+
+<% for( i = 0; i < tags.length; i++) { var tag=tags[i] ; %># <%= tag.name %>
+<% for( j = 0; j < paths.length; j++) {var path=paths[j]; if(path.tags.indexOf(tag.name)>-1){ %>
 ## <%= path.summary %>
 
 **接口说明**:<%= path.description %>
 
-
 **接口地址**:`<%= path.url %>`
-
 
 **请求方式**：`<%= path.methodType %>`
 
-
 **consumes**:`<%= path.consumes %>`
-
 
 **produces**:`<%= path.produces %>`
 
 **请求参数**：
+
 <% if(path.parameters!=null && path.parameters.length>0){ %>
 | 参数名称         | 说明     |     in |  是否必须      |  类型   |  schema  |
 | ------------ | -------------------------------- |-----------|--------|----|--- |
-<% for( a = 0; a < path.parameters.length; a++) {var param=path.parameters[a]; %>|<%=param.name%>| <%=param.description%>  | <%=param.in%> | <%=param.require%> |<%=param.type%>  | <%=param.schemaValue%>   |
-                <%}%>
+<% for( a = 0; a < path.parameters.length; a++) {var param=path.parameters[a]; %>| <%=param.name%> | <%=param.description%> | <%=param.in%> | <%=param.require%> |<%=param.type%> | <%=param.schemaValue%> |
+<%}%>
 <%}else{%>暂无<%}%><% if(path.refparameters!=null && path.refparameters.length>0){ %>
+
 **schema属性说明**
+
 <% for( a = 0; a < path.refparameters.length; a++) { var ref=path.refparameters[a];%>
 **<%=ref.name%>**
 | 参数名称         | 说明    |     in |  是否必须   |  类型  |  schema |
 | ------------ | -------------------------------- |-----------|--------|----|--- |
-<% for( b = 0; b < ref.params.length; b++) { var rp=ref.params[b];%>|<%=rp.name%>| <%=rp.description%>  | <%=rp.in%> | <%=rp.require%> |<%=rp.type%>  | <%=rp.schemaValue%>   |
-                <%}}}%>
+<% for( b = 0; b < ref.params.length; b++) { var rp=ref.params[b];%>
+| <%=rp.name%> | <%=rp.description%> | <%=rp.in%> | <%=rp.require%> | <%=rp.type%> | <%=rp.schemaValue%> |<%}}}%>
+
 **响应数据**:
 
 ```json
 <%= path.responseValue %>
 ```
+
 **响应参数说明**:
+
 <% if(path.responseParameters!=null && path.responseParameters.length>0){ %>
 | 参数名称         | 说明                             |    类型 |  schema |
 | ------------ | -------------------|-------|----------- |
-<% for( a = 0; a < path.responseParameters.length; a++) { var param=path.responseParameters[a];%>|<%=param.name%>| <%=param.description%>  |<%=param.type%>  | <%=param.schemaValue%>   |
+<% for( a = 0; a < path.responseParameters.length; a++) { var param=path.responseParameters[a];%>| <%=param.name%> | <%=param.description%> |<%=param.type%>  | <%=param.schemaValue%> |
 <%}}else{%>
 暂无
 <%}%>
 <% if(path.responseRefParameters!=null && path.responseRefParameters.length>0){ %>
+
 **schema属性说明**
+
 <% for( a = 0; a < path.responseRefParameters.length; a++) { var ref=path.responseRefParameters[a];%>
+
 **<%=ref.name%>**
+
 | 参数名称         |  说明          |   类型  |  schema |
 | ------------ | ------------------|--------|----------- |
-<% for( b = 0; b < ref.params.length; b++) { var rp=ref.params[b];%>|<%=rp.name%> | <%=rp.description%>   |<%=rp.type%>  | <%=rp.schemaValue%>   |
-                <%}%>
+<% for( b = 0; b < ref.params.length; b++) { var rp=ref.params[b];%>|<%=rp.name%> | <%=rp.description%>   |<%=rp.type%>  | <%=rp.schemaValue%>  |
+<%}%>
+
 <%}}%>
+
 **响应状态码说明**:
+
 <% if(path.responseCodes!=null && path.responseCodes.length>0){ %>
 | 状态码         | 说明                             |    schema                         |
 | ------------ | -------------------------------- |---------------------- |
-<% for( a = 0; a < path.responseCodes.length; a++) { var param=path.responseCodes[a];%>| <%=param.code%> | <%=param.description%>  |<%=param.schema%>|
-                <%}%>
+<% for( a = 0; a < path.responseCodes.length; a++) { var param=path.responseCodes[a];%>| <%=param.code%> | <%=param.description%>  |<%=param.schema%>|<%}%>
 <%}else{%>
 暂无
-<%}%>
-        <%}%>
-    <%}%>
-<%}%>
-
-
+<%}%><%}%><%}%><%}%>
 
 
             </textarea>
@@ -766,6 +774,7 @@
 
 <script type="text/javascript">
 	$(function () {
+
 		/***
 		 * 拖动事件
 		 * @type {boolean}
