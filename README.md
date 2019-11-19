@@ -5,7 +5,7 @@
 <dependency>
     <groupId>cn.msuno</groupId>
     <artifactId>swagger-spring-boot-starter</artifactId>
-    <version>2.3.0</version>
+    <version>2.5.0</version>
 </dependency>
 ```
 
@@ -81,3 +81,18 @@ public class TestController extends BaseRestController {
 }
 ```
 >出参，出参不需要和入参body语法一样
+
+
+## 2.5.0及以上版本，增加自定义页面
+只要定义List<CustomPage>对象，实现自定义页面
+```java
+@Configuration
+public class Swagger2  {
+    
+     @Bean
+     @ConditionalOnMissingBean(name = "customPage")
+     public List<CustomPage> customPage() {
+         return Lists.newArrayList();
+     }
+}
+```

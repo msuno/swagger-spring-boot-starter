@@ -20,6 +20,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
+
+import cn.msuno.swagger.spring.boot.autoconfigure.model.CustomPage;
 import cn.msuno.swagger.spring.boot.autoconfigure.properties.SwaggerProperties;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -110,5 +113,11 @@ public class SwaggerAutoConfiguration {
     @ConditionalOnMissingBean(name = "globalParameters")
     public List<Parameter> globalParameters() {
         return new ArrayList<>();
+    }
+    
+    @Bean
+    @ConditionalOnMissingBean(name = "customPage")
+    public List<CustomPage> customPage() {
+        return Lists.newArrayList();
     }
 }

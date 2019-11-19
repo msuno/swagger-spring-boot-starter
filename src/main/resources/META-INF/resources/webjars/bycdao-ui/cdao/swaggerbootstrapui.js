@@ -20,6 +20,7 @@
 		this.instances = new Array();
 		//当前分组实例
 		this.currentInstance = null;
+		this.customPage = null;
 	}
 	/***
 	 * swagger-bootstrap-ui的main方法,初始化文档所有功能,类似于SpringBoot的main方法
@@ -344,7 +345,7 @@
 
 		//全局响应码
 		if (that.currentInstance.statusCode != null && that.currentInstance.statusCode.length > 0) {
-			var respCode = $("<li  class=\"detailMenu\"><a href=\"javascript:void(0)\"><i class=\"icon-text-width iconfont icon-iconset0118\"></i><span class=\"menu-text\"> 全局响应码 </span></a></li>");
+			var respCode = $('<li class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-iconset0118"></i><span class="menu-text"> 全局响应码 </span></a></li>');
 			respCode.on("click", function () {
 				that.log("全局响应码")
 				that.createRespCode();
@@ -352,6 +353,18 @@
 				respCode.addClass("active");
 			})
 			that.getMenu().append(respCode);
+		}
+
+		if (that.currentInstance.customPage != null && that.currentInstance.customPage.length > 0) {
+			$.each(that.currentInstance.customPage, function(i, page) {
+				var customPage = $('<li class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-iconset0118"></i><span class="menu-text"> ' + page.tag + ' </span></a></li>');
+				customPage.on("click", function(){
+					that.createCustomPage(page)
+					that.getMenu().find("li").removeClass("active");
+					customPage.addClass("active");
+				})
+				that.getMenu().append(customPage);
+			});
 		}
 
 		$.each(that.currentInstance.tags, function (i, tag) {
@@ -1845,6 +1858,30 @@
 	 * 创建全局所有响应码
 	 * 点击生成该文件
 	 */
+	SwaggerBootstrapUi.prototype.createCustomPage = function (data) {
+		var that = this;
+		//内容覆盖
+		that.getDoc().html("");
+		//that.getDoc().append(div);
+		setTimeout(function () {
+			var html = template('SwaggerBootstrapUICustomPageScript', data);
+			that.getDoc().html(html);
+			$("#customPageText").each(function () {
+				var md = $(this).val();
+				if (md) {
+					$("#customPage").html(marked(md));
+					$('pre code').each(function (i, block) {
+						hljs.highlightBlock(block);
+					});
+				}
+			});
+		}, 100)
+	}
+
+	/**
+	 * 创建全局所有响应码
+	 * 点击生成该文件
+	 */
 	SwaggerBootstrapUi.prototype.createRespCode = function () {
 		var that = this;
 		//内容覆盖
@@ -2125,6 +2162,10 @@
 				resCode["description"] = statusMap[key];
 				that.currentInstance.statusCode.push(resCode);
 			}
+		}
+		//customPage
+		if (menu != null && typeof (menu) != 'undefined' && menu != undefined && menu.hasOwnProperty("customPage")) {
+			that.currentInstance.customPage = menu["customPage"];
 		}
 
 	}

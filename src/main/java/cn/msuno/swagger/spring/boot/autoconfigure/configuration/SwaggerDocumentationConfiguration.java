@@ -1,5 +1,6 @@
 package cn.msuno.swagger.spring.boot.autoconfigure.configuration;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
 
 import cn.msuno.swagger.spring.boot.autoconfigure.mappers.ServiceModelToSwagger2Mapper;
+import cn.msuno.swagger.spring.boot.autoconfigure.model.CustomPage;
 import cn.msuno.swagger.spring.boot.autoconfigure.properties.Swagger2JacksonModule;
 import cn.msuno.swagger.spring.boot.autoconfigure.web.Swagger2Controller;
 import springfox.documentation.spring.web.DocumentationCache;
@@ -38,9 +40,9 @@ public class SwaggerDocumentationConfiguration {
             DocumentationCache documentationCache,
             ServiceModelToSwagger2Mapper mapper,
             JsonSerializer jsonSerializer,
-            Map<String, String> responseCode) {
+            Map<String, String> responseCode, List<CustomPage> customPage) {
         return new PropertySourcedRequestMappingHandlerMapping(
                 environment,
-                new Swagger2Controller(environment, documentationCache, mapper, jsonSerializer, responseCode));
+                new Swagger2Controller(environment, documentationCache, mapper, jsonSerializer, responseCode, customPage));
     }
 }

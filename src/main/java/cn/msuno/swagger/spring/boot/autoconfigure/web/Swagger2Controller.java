@@ -2,6 +2,7 @@ package cn.msuno.swagger.spring.boot.autoconfigure.web;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 import cn.msuno.swagger.spring.boot.autoconfigure.mappers.ServiceModelToSwagger2Mapper;
+import cn.msuno.swagger.spring.boot.autoconfigure.model.CustomPage;
 import cn.msuno.swagger.spring.boot.autoconfigure.model.SwaggerVo;
 import io.swagger.models.Swagger;
 import springfox.documentation.annotations.ApiIgnore;
@@ -47,6 +49,7 @@ public class Swagger2Controller {
     private final ServiceModelToSwagger2Mapper mapper;
     private final JsonSerializer jsonSerializer;
     private final Map<String, String> responseCode;
+    private final List<CustomPage> customPage;
     
     @Autowired
     public Swagger2Controller(
@@ -54,7 +57,7 @@ public class Swagger2Controller {
             DocumentationCache documentationCache,
             ServiceModelToSwagger2Mapper mapper,
             JsonSerializer jsonSerializer,
-            Map<String, String> responseCode) {
+            Map<String, String> responseCode, List<CustomPage> customPage) {
         
         this.hostNameOverride =
                 environment.getProperty(
@@ -64,6 +67,7 @@ public class Swagger2Controller {
         this.mapper = mapper;
         this.jsonSerializer = jsonSerializer;
         this.responseCode = responseCode;
+        this.customPage = customPage;
     }
     
     @RequestMapping(
@@ -90,9 +94,9 @@ public class Swagger2Controller {
         if (isNullOrEmpty(swagger.getHost())) {
             swagger.host(hostName(uriComponents));
         }
-        //extend(swagger);
         SwaggerVo vo = new SwaggerVo(swagger);
         vo.setStatusCode(responseCode);
+        vo.setCustomPage(customPage);
         return new ResponseEntity<Json>(jsonSerializer.toJson(vo), HttpStatus.OK);
     }
     
