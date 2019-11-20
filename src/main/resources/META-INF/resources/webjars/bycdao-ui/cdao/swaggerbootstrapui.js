@@ -198,7 +198,7 @@
 		var host = $.getValue(menu, "host", "", true);
 		if (menu.hasOwnProperty("info")) {
 			var info = menu.info;
-			title = $.getValue(info, "title", "Swagger-Bootstrap-UI-前后端api接口文档", true);
+			title = $.getValue(info, "title", "API文档", true);
 			description = $.getValue(info, "description", "", true);
 			if (info.hasOwnProperty("contact")) {
 				var contact = info["contact"];
