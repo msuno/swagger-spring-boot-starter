@@ -2287,6 +2287,9 @@
 					var minfo = new SwaggerBootstrapUiParameter();
 					minfo.name = m.name;
 					minfo.type = m.type;
+					if (m.type === 'file') {
+						minfo.schemaValue = 'MultipartFile';
+					}
 					minfo.in = m.in;
 					minfo.require = m.required;
 					minfo.description = m.description;

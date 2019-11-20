@@ -186,10 +186,11 @@
 
 <% for( a = 0; a < path.refparameters.length; a++) { var ref=path.refparameters[a];%>
 **<%=ref.name%>**
+
 | 参数名称         | 说明    |     in |  是否必须   |  类型  |  schema |
 | ------------ | -------------------------------- |-----------|--------|----|--- |
-<% for( b = 0; b < ref.params.length; b++) { var rp=ref.params[b];%>
-| <%=rp.name%> | <%=rp.description%> | <%=rp.in%> | <%=rp.require%> | <%=rp.type%> | <%=rp.schemaValue%> |<%}}}%>
+<% for( b = 0; b < ref.params.length; b++) { var rp=ref.params[b];%>| <%=rp.name%> | <%=rp.description%> | <%=rp.in%> | <%=rp.require%> | <%=rp.type%> | <%=rp.schemaValue%> |
+<%}}}%>
 
 **响应数据**:
 
