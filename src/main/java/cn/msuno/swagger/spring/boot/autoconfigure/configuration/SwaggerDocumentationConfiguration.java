@@ -3,7 +3,6 @@ package cn.msuno.swagger.spring.boot.autoconfigure.configuration;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
@@ -27,7 +26,6 @@ import springfox.documentation.swagger.configuration.SwaggerCommonConfiguration;
 @ComponentScan(basePackages = {
         "cn.msuno.swagger.spring.boot.autoconfigure.mappers"
 })
-@ConditionalOnWebApplication
 public class SwaggerDocumentationConfiguration {
     @Bean
     public JacksonModuleRegistrar swagger2Module() {

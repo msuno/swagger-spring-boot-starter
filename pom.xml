@@ -3,11 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cn.msuno</groupId>
-  <artifactId>swagger-spring-boot-starter</artifactId>
-  <version>2.5.2</version>
+  <artifactId>swagger-spring-mvc</artifactId>
+  <version>spring-mvc-1.0.0</version>
   <packaging>jar</packaging>
-  <name>swagger-spring-boot-starter</name>
-  <description>Project for Spring Boot</description>
+  <name>swagger-spring-mvc</name>
+  <description>Project for Spring Mvc</description>
   <url>https://www.msuno.cn</url>
 
   <licenses>
@@ -39,50 +39,32 @@
     <swagger-o.version>1.5.20</swagger-o.version>
     <spring-boot.version>2.0.6.RELEASE</spring-boot.version>
     <javadoc.version>1.0.0</javadoc.version>
+    <spring.version>4.3.18.RELEASE</spring.version>
+    <servlet.version>3.0.1</servlet.version>
+    <jackson.version>2.6.3</jackson.version>
   </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>${spring-boot.version}</version>
-      <optional>true</optional>
-      <scope>compile</scope>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <version>${spring-boot.version}</version>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure-processor</artifactId>
-      <version>${spring-boot.version}</version>
-      <scope>compile</scope>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${servlet.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <version>${spring-boot.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-logging</artifactId>
-      <version>${spring-boot.version}</version>
-      <scope>compile</scope>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>cn.msuno</groupId>
@@ -178,20 +160,20 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <version>1.5</version>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+<!--      <plugin>-->
+<!--        <groupId>org.apache.maven.plugins</groupId>-->
+<!--        <artifactId>maven-gpg-plugin</artifactId>-->
+<!--        <version>1.5</version>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <id>sign-artifacts</id>-->
+<!--            <phase>verify</phase>-->
+<!--            <goals>-->
+<!--              <goal>sign</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
     </plugins>
   </build>
   <distributionManagement>
