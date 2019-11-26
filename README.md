@@ -1,41 +1,103 @@
-## swagger-spring-boot-starter
+## swagger-spring-mvc
 
 + 引入pom
 ```xml
 <dependency>
-    <groupId>cn.msuno</groupId>
-    <artifactId>swagger-spring-boot-starter</artifactId>
-    <version>2.5.1</version>
+  <groupId>cn.msuno</groupId>
+  <artifactId>swagger-spring-mvc</artifactId>
+  <version>spring-mvc-1.0.0</version>
 </dependency>
 ```
 
-+ 启动javadoc swagger restful, 如果注解EnableJavadocSwagger2
++ 启动javadoc swagger restful
 ```java
-@EnableJavadocSwagger2  //启动javadoc swagger
-public class ApiApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ApiApplication.class, args);
-    }
-}
-```
+package com.live.web.config;
 
-+ 配置全局状态码
-```java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.MediaType;
+
+import cn.msuno.swagger.spring.boot.autoconfigure.model.CustomPage;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.ParameterBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.ModelRef;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Parameter;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
 
 @Configuration
-public class Swagger2  {
-    /**
-     * 全局状态码key, value形式
-     * code-desc:  200-OK
-     */
+@ComponentScan(basePackages = "cn.msuno.swagger.spring.boot.autoconfigure")
+public class SwaggerConfig {
+    
+    private  Logger logger = LoggerFactory.getLogger(getClass());
+   
+    @Bean("docket")
+    @Primary
+    public Docket createRestApi() {
+        // 添加head参数start
+        ParameterBuilder tokenPar = new ParameterBuilder();
+        List<Parameter> pars = new ArrayList<Parameter>();
+        tokenPar.name("Content-Type").description("ContentType").modelRef(new ModelRef("string"))
+                .parameterType("header").defaultValue(MediaType.APPLICATION_JSON_UTF8_VALUE).required(true).build();
+        pars.add(tokenPar.build());
+        tokenPar.name("cloud-meeting-client-type").description("请求类型").modelRef(new ModelRef("string"))
+                .parameterType("header").defaultValue("wxapp").required(true).build();
+        pars.add(tokenPar.build());
+        tokenPar.name("cloud-meeting-session-id").description("sessionId").modelRef(new ModelRef("string"))
+                .parameterType("header").defaultValue("").required(true).build();
+        pars.add(tokenPar.build());
+        //添加head参数end
+        
+        return new Docket(DocumentationType.SWAGGER_2)
+                .enable(true)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.live.web.controller.api"))
+                .paths(PathSelectors.any())
+                .build()
+                .globalOperationParameters(pars);
+    }
+    
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("云会议API")
+                .description("小程序、APP和PC网页数据接接口")
+                .version("1.0")
+                .build();
+    }
+    
     @Bean(name = "responseCode")
     public Map<String, String> responseCode(){
-        Map<String,String> result = new HashMap<>();
-        return result;
+        return new HashMap<>();
+    }
+    
+    @Bean(name = "customPage")
+    public List<CustomPage> cusTomPage() {
+        return new ArrayList<>();
     }
     
 }
 ```
+
++ 配置静态资源
+```xml
+<mvc:resources mapping="/doc.html" location="classpath:/META-INF/resources/" />
+<mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/" />
+```
+
 
 + 增加全局入参，参考[com.live.cloudmeeting.bootconfig.Swagger2]
 
@@ -81,19 +143,4 @@ public class TestController extends BaseRestController {
 }
 ```
 >出参，出参不需要和入参body语法一样
-
-
-## 2.5.0及以上版本，增加自定义页面
-只要定义List<CustomPage>对象，实现自定义页面
-```java
-@Configuration
-public class Swagger2  {
-    
-     @Bean
-     @ConditionalOnMissingBean(name = "customPage")
-     public List<CustomPage> customPage() {
-         return Lists.newArrayList();
-     }
-}
-```
 
