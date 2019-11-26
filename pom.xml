@@ -41,7 +41,7 @@
     <javadoc.version>1.0.0</javadoc.version>
     <spring.version>4.3.18.RELEASE</spring.version>
     <servlet.version>3.0.1</servlet.version>
-    <jackson.version>2.6.3</jackson.version>
+    <jackson.version>2.9.10.1</jackson.version>
   </properties>
 
   <dependencies>
