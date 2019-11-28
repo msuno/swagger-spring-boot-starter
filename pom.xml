@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>cn.msuno</groupId>
   <artifactId>swagger-spring-mvc</artifactId>
-  <version>spring-mvc-1.0.0</version>
+  <version>spring-mvc-2.0.0</version>
   <packaging>jar</packaging>
   <name>swagger-spring-mvc</name>
   <description>Project for Spring Mvc</description>
@@ -187,6 +187,10 @@
       <name>Nexus Release Repository</name>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
+<!--      <repository>-->
+<!--        <id>releases</id>-->
+<!--        <url>http://repository.polyv.net/nexus/content/repositories/releases/</url>-->
+<!--      </repository>-->
   </distributionManagement>
 
 </project>

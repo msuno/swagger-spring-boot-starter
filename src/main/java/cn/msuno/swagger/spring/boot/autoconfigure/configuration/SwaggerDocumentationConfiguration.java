@@ -1,5 +1,7 @@
 package cn.msuno.swagger.spring.boot.autoconfigure.configuration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
 
 import cn.msuno.swagger.spring.boot.autoconfigure.mappers.ServiceModelToSwagger2Mapper;
+import cn.msuno.swagger.spring.boot.autoconfigure.model.CustomDef;
 import cn.msuno.swagger.spring.boot.autoconfigure.model.CustomPage;
 import cn.msuno.swagger.spring.boot.autoconfigure.properties.Swagger2JacksonModule;
 import cn.msuno.swagger.spring.boot.autoconfigure.web.Swagger2Controller;
@@ -32,15 +35,30 @@ public class SwaggerDocumentationConfiguration {
         return new Swagger2JacksonModule();
     }
     
+    @Bean("customDef")
+    public List<CustomDef> customDef(){
+        return new ArrayList<>();
+    }
+    
+    @Bean(name = "customPage")
+    public List<CustomPage> cusTomPage() {
+        return new ArrayList<>();
+    }
+    
+    @Bean(name = "responseCode")
+    public Map<String, String> responseCode(){
+        return new HashMap<>();
+    }
+    
     @Bean
     public HandlerMapping swagger2ControllerMapping(
             Environment environment,
             DocumentationCache documentationCache,
             ServiceModelToSwagger2Mapper mapper,
             JsonSerializer jsonSerializer,
-            Map<String, String> responseCode, List<CustomPage> customPage) {
+            Map<String, String> responseCode, List<CustomPage> customPage, List<CustomDef> customDef) {
         return new PropertySourcedRequestMappingHandlerMapping(
                 environment,
-                new Swagger2Controller(environment, documentationCache, mapper, jsonSerializer, responseCode, customPage));
+                new Swagger2Controller(environment, documentationCache, mapper, jsonSerializer, responseCode, customPage, customDef));
     }
 }

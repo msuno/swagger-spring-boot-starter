@@ -17,6 +17,8 @@ public class SwaggerVo extends Swagger {
     
     private List<CustomPage> customPage;
     
+    private List<CustomDef> customDef;
+    
     public Map<String, String> getStatusCode() {
         return statusCode;
     }
@@ -31,5 +33,13 @@ public class SwaggerVo extends Swagger {
     
     public void setCustomPage(List<CustomPage> customPage) {
         this.customPage = customPage;
+    }
+    
+    public List<CustomDef> getCustomDef() {
+        return customDef;
+    }
+    
+    public void setCustomDef(List<CustomDef> customDef) {
+        this.customDef = customDef;
     }
 }

@@ -21,12 +21,39 @@
 		//当前分组实例
 		this.currentInstance = null;
 		this.customPage = null;
+		this.statusCode = null;
+		this.customDef = null;
+		this.rendererMD = new marked.Renderer();
 	}
 	/***
 	 * swagger-bootstrap-ui的main方法,初始化文档所有功能,类似于SpringBoot的main方法
 	 */
 	SwaggerBootstrapUi.prototype.main = function () {
 		var that = this;
+
+		this.rendererMD.heading = function(text, level) {
+			var id = text;
+			if (/\(\:(\S*)\)/.test(text)) {
+				id = text.match(/\(\:(\S*)\)/)[1]
+			} 
+			var content = text;
+			if (/\(\:\S*\)(\S*)/.test(text)){
+				content = text.match(/\(\:\S*\)(\S*)/)[1]
+			}
+			return `<h${level} id="${id}">${content}</h${level}>`
+		}
+		this.rendererMD.paragraph = function(text, level) {
+			var id = text;
+			if (/\(\:(\S*)\)/.test(text)) {
+				id = text.match(/\(\:(\S*)\)/)[1]
+			} 
+			var content = text;
+			if (/\(\:\S*\)(\S*)/.test(text)){
+				content = text.match(/\(\:\S*\)(\S*)/)[1]
+			}
+			return `<p id="${id}">${content}</p>`
+		}
+
 		that.initWindowWidthAndHeight();
 
 		that.windowResize();
@@ -36,8 +63,60 @@
 		that.createGroupElement();
 		//搜索
 		that.searchEvents();
-
+		// 初始化页面tab
+		that.initMenuTab();
 	}
+
+	// 根据参数定位页面tab
+	SwaggerBootstrapUi.prototype.initMenuTab = function () {
+		var that = this;
+		var url = decodeURI(window.parent.location.hash);
+		url = url.substr(2, url.length)
+		var tabs = false;
+		if (/menuLi/.test(url)) {
+			url = url.substr(6, url.length)
+			tabs = true;
+		}
+		if (url.indexOf("/") > 0) {
+			url = url.substr(0, url.indexOf("/"))
+		}
+		url = that.toStrCode(url)
+		var id = '#' + url + '_c';
+		if (tabs) {
+			var menu = $(document.getElementById(url + '_c'));
+			var data = menu.data("data");
+			var parentLi = menu.parent().parent();
+			parentLi.addClass("open")
+			that.getMenu().find("li").removeClass("active");
+			menu.addClass("active");
+			menu.parent().css("display", 'block')
+			that.createApiInfoTable(data, menu);
+		} else {
+			$(id).trigger("click");
+		}
+		if (window.parent.location.hash) {
+			setTimeout(function(){
+		    	var data = decodeURI(window.parent.location.hash).toString()
+		    	data = data.substr(1, data.length)
+		        var ele = document.getElementById(data)
+		        if($(ele).length === 1) {
+		        	var t = $(ele).offset().top - 80;
+    				$('#content').scrollTop(t);
+		        }
+			},100)
+	    }
+		
+	}
+
+	SwaggerBootstrapUi.prototype.toStrCode = function (str) {
+		var hash = 0;
+	    for (i = 0; i < str.length; i++) {
+	        char = str.charCodeAt(i) << 8;
+	        hash += char;
+	    }
+	    return "swagger_"+hash.toString(16);
+	}
+
 	/***
 	 * 搜索按钮事件
 	 */
@@ -308,66 +387,95 @@
 		var that = this;
 		that.getMenu().find(".detailMenu").remove();
 		//简介li
-		var dli = $('<li  class="active detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-icon_home"></i><span class="menu-text"> 主页 </span></a></li>')
+		var descTab = "desc";
+		var dli = $('<li id="' + that.toStrCode(descTab) + '_c" class="active detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-icon_home"></i><span class="menu-text"> 主页 </span></a></li>')
 		dli.on("click", function () {
 			that.log("简介click")
 			that.createDescriptionElement();
 			that.getMenu().find("li").removeClass("active");
 			dli.addClass("active");
+			window.parent.location.hash = "/" + descTab;
 		})
 		that.getMenu().append(dli);
 		//是否有全局参数
 		if (that.currentInstance.securityArrs != null && that.currentInstance.securityArrs.length > 0) {
-			var securityLi = $('<li  class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-authenticationsystem"></i><span class="menu-text"> Authorize </span></a></li>');
+			var securityTab = "security";
+			var securityLi = $('<li id="' + that.toStrCode(securityTab) + '_c" class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-authenticationsystem"></i><span class="menu-text"> Authorize </span></a></li>');
 			securityLi.on("click", function () {
 				that.log("securityLi");
 				that.createSecurityElement();
 				that.getMenu().find("li").removeClass("active");
 				securityLi.addClass("active");
+				window.parent.location.hash = "/" + securityTab
 			})
 			that.getMenu().append(securityLi);
 		}
 		//全局参数菜单功能
-		var globalArgsLi = $("<li  class=\"detailMenu\"><a href=\"javascript:void(0)\"><i class=\"icon-text-width iconfont icon-zhongduancanshuguanli\"></i><span class=\"menu-text\"> 全局参数设置 </span></a></li>");
+		var globalParameterTab = "globalParameter";
+		var globalArgsLi = $('<li id="' + that.toStrCode(globalParameterTab) + '_c" class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-zhongduancanshuguanli"></i><span class="menu-text"> 全局参数设置 </span></a></li>');
 		globalArgsLi.on("click", function () {
+			var keyTab = "security";
 			that.getMenu().find("li").removeClass("active");
 			globalArgsLi.addClass("active");
 			that.createGlobalParametersElement();
+			window.parent.location.hash = "/" + globalParameterTab
 		})
 		that.getMenu().append(globalArgsLi);
 
 		//离线文档功能
-		var mddocli = $("<li  class=\"detailMenu\"><a href=\"javascript:void(0)\"><i class=\"icon-text-width iconfont icon-iconset0118\"></i><span class=\"menu-text\"> 离线文档(MD) </span></a></li>");
+		var docsTab = "docs"
+		var mddocli = $('<li id="' + that.toStrCode(docsTab) + '_c" class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-iconset0118"></i><span class="menu-text"> 离线文档(MD) </span></a></li>');
 		mddocli.on("click", function () {
 			that.log("离线文档功能click")
 			that.createMarkdownTab();
 			that.getMenu().find("li").removeClass("active");
 			mddocli.addClass("active");
+			if (window.parent.location.hash.indexOf(docsTab) == -1) {
+				window.parent.location.hash = "/" + docsTab
+			}
 		})
 		that.getMenu().append(mddocli);
 
 		//全局响应码
 		if (that.currentInstance.statusCode != null && that.currentInstance.statusCode.length > 0) {
-			var respCode = $('<li class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-iconset0118"></i><span class="menu-text"> 全局响应码 </span></a></li>');
+			var responseCodeTab = "responseCode";
+			var respCode = $('<li id="' + that.toStrCode(responseCodeTab) + '_c" class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-iconset0118"></i><span class="menu-text"> 全局响应码 </span></a></li>');
 			respCode.on("click", function () {
 				that.log("全局响应码")
 				that.createRespCode();
 				that.getMenu().find("li").removeClass("active");
 				respCode.addClass("active");
+				window.parent.location.hash = "/" + responseCodeTab
 			})
 			that.getMenu().append(respCode);
 		}
-
+		// 自定义页面
 		if (that.currentInstance.customPage != null && that.currentInstance.customPage.length > 0) {
 			$.each(that.currentInstance.customPage, function(i, page) {
-				var customPage = $('<li class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-iconset0118"></i><span class="menu-text"> ' + page.tag + ' </span></a></li>');
+				var customPage = $('<li id="' + that.toStrCode(page.tag) + '_c" class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-iconset0118"></i><span class="menu-text"> ' + page.tag + ' </span></a></li>');
 				customPage.on("click", function(){
 					that.createCustomPage(page)
 					that.getMenu().find("li").removeClass("active");
 					customPage.addClass("active");
+					window.parent.location.hash = "/" + page.tag 
 				})
 				that.getMenu().append(customPage);
 			});
+		}
+
+		// 自定义通用版本
+		if (that.currentInstance.customDef != null && that.currentInstance.customDef.length > 0) {
+			var staticTab = "static"
+			var customDef = $('<li id="' + that.toStrCode(staticTab) + '_c" class="detailMenu"><a href="javascript:void(0)"><i class="icon-text-width iconfont icon-iconset0118"></i><span class="menu-text"> 静态常量定义 </span></a></li>');
+			customDef.on("click", function(){
+				that.createCustomDef()
+				that.getMenu().find("li").removeClass("active");
+				customDef.addClass("active");
+				if (window.parent.location.hash.indexOf(staticTab) == -1) {
+					window.parent.location.hash = "/" + staticTab 
+				}
+			});
+			that.getMenu().append(customDef);
 		}
 
 		$.each(that.currentInstance.tags, function (i, tag) {
@@ -383,7 +491,7 @@
 				//循环树
 				var ul = $('<ul class="submenu"></ul>')
 				$.each(tag.childrens, function (i, children) {
-					var childrenLi = $('<li class="menuLi" ><div class="mhed"><div class="swu-hei"><span class="swu-menu swu-left"><span class="menu-url-' + children.methodType.toLowerCase() + '">' + children.methodType.toUpperCase() + '</span></span><span class="swu-menu swu-left"><span class="menu-url">' + children.showUrl + '</span></span></div><div class="swu-menu-api-des">' + children.summary + '</div></div></li>');
+					var childrenLi = $('<li id="' + that.toStrCode(children.showUrl) + '_c" class="menuLi" ><div class="mhed"><div class="swu-hei"><span class="swu-menu swu-left"><span class="menu-url-' + children.methodType.toLowerCase() + '">' + children.methodType.toUpperCase() + '</span></span><span class="swu-menu swu-left"><span class="menu-url">' + children.showUrl + '</span></span></div><div class="swu-menu-api-des">' + children.summary + '</div></div></li>');
 					childrenLi.data("data", children);
 					ul.append(childrenLi);
 				})
@@ -603,15 +711,16 @@
 			menu.addClass("active");
 			that.createApiInfoTable(data, menu);
 			//DApiUI.createDebugTab(data);
+			window.parent.location.hash = "/menuLi" + data.showUrl
 		})
 	}
 
 	SwaggerBootstrapUi.prototype.createApiInfoTable = function (apiInfo, menu) {
 		var that = this;
-		that.createTabElement();
 		//查找接口doc
-		that.getDoc().find("#tab1").find(".panel-body").html("")
 		setTimeout(function () {
+			that.createTabElement();
+			that.getDoc().find("#tab1").find(".panel-body").html("")
 			var html = template('contentScript', apiInfo);
 			that.getDoc().find("#tab1").find(".panel-body").html(html)
 			that.markdownDocInit();
@@ -621,40 +730,42 @@
 			if (apiInfo.responseJson != null) {
 				$(".language-json:first").JSONView(apiInfo.responseJson);
 			}
+
+			that.log(that.currentInstance);
+			//实现复制文档功能
+			//初始化copy按钮功能
+			var clipboard = new ClipboardJS('#copyDocHref', {
+				text: function () {
+					return $("#docText").val();
+				}
+			});
+			clipboard.on('success', function (e) {
+				layer.msg("复制成功")
+			});
+			clipboard.on('error', function (e) {
+				layer.msg("复制失败,您当前浏览器版本不兼容,请手动复制.")
+			});
+			that.log(that.currentInstance);
+
+			//创建调试页面
+			//赋值全局参数
+			apiInfo.globalParameters = that.currentInstance.globalParameters;
+			that.getDoc().find("#tab2").find(".panel-body").html("");
+			var htmlD = template('DebugScript', apiInfo);
+			that.getDoc().find("#tab2").find(".panel-body").html(htmlD);
+			//绑定全选事件
+			$("#parameterCheckAll").on("click", function (e) {
+				var chk = $(this);
+				that.log("是否选中...")
+				var chked = chk.find("input:first").prop("checked");
+				that.log(chked)
+				$("#paramBody").find("input:checkbox").prop("checked", chked);
+			});
+			//如果有文件上传,绑定多文件增加按钮事件
+
+			that.requestSend(apiInfo, menu);
 		}, 100)
-		that.log(that.currentInstance);
-		//实现复制文档功能
-		//初始化copy按钮功能
-		var clipboard = new ClipboardJS('#copyDocHref', {
-			text: function () {
-				return $("#docText").val();
-			}
-		});
-		clipboard.on('success', function (e) {
-			layer.msg("复制成功")
-		});
-		clipboard.on('error', function (e) {
-			layer.msg("复制失败,您当前浏览器版本不兼容,请手动复制.")
-		});
-		that.log(that.currentInstance);
-
-		//创建调试页面
-		//赋值全局参数
-		apiInfo.globalParameters = that.currentInstance.globalParameters;
-		that.getDoc().find("#tab2").find(".panel-body").html("");
-		var html = template('DebugScript', apiInfo);
-		that.getDoc().find("#tab2").find(".panel-body").html(html);
-		//绑定全选事件
-		$("#parameterCheckAll").on("click", function (e) {
-			var chk = $(this);
-			that.log("是否选中...")
-			var chked = chk.find("input:first").prop("checked");
-			that.log(chked)
-			$("#paramBody").find("input:checkbox").prop("checked", chked);
-		});
-		//如果有文件上传,绑定多文件增加按钮事件
-
-		that.requestSend(apiInfo, menu);
+		
 
 	}
 
@@ -1829,14 +1940,25 @@
 		setTimeout(function () {
 			var html = template('offLinecontentScript', that.currentInstance);
 			that.getDoc().html(html);
-			$("#btnView").on("click",function(){
+			$("#txtOffLineDoc").each(function () {
+				var md = $(this).val();
+				if (md) {
+					$("#txtOffLineDocText").html(marked(md,{renderer:that.rendererMD}));
+					$('pre code').each(function (i, block) {
+						hljs.highlightBlock(block);
+					});
+				}
+			});
+			$("#btnView").click(function(){
+				console.log("===")
 				var md = $("#txtOffLineDoc").html();
 				if (md) {
-					$("#txtOffLineDocText").html(marked(md));
+					$("#txtOffLineDocText").html(marked(md,{renderer:that.rendererMD}));
 					$("#txtOffLineDoc").css("display","none");
 				}
 			});
-			$("#btnMarkdown").on("click",function(){
+			$("#btnMarkdown").click(function(){
+				console.log("===")
 				$("#txtOffLineDocText").html('');
 				$("#txtOffLineDoc").css("display","block");
 			})
@@ -1878,6 +2000,29 @@
 			});
 		}, 100)
 	}
+
+	/**
+	 * 自定义通用定义
+	 * 点击生成该文件
+	 */
+	SwaggerBootstrapUi.prototype.createCustomDef = function () {
+		var that = this;
+		//内容覆盖
+		that.getDoc().html("");
+		setTimeout(function () {
+			var html = template('SwaggerBootstrapUICustomDefScript', that.currentInstance);
+			that.getDoc().html(html);
+			//$("#customDefText").each(function () {
+				var md = $('#customDefText').val();
+				if (md) {
+					$("#customDef").html(marked(md,{renderer:that.rendererMD}));
+					$('pre code').each(function (i, block) {
+						hljs.highlightBlock(block);
+					});
+				}
+			//});
+		}, 100)
+	};
 
 	/**
 	 * 创建全局所有响应码
@@ -2165,10 +2310,13 @@
 			}
 		}
 		//customPage
-		if (menu != null && typeof (menu) != 'undefined' && menu != undefined && menu.hasOwnProperty("customPage")) {
+		if (menu != null && typeof (menu) != 'undefined' && menu.hasOwnProperty("customPage")) {
 			that.currentInstance.customPage = menu["customPage"];
 		}
-
+		// customDef
+		if (menu != null && typeof (menu) != 'undefined' && menu.hasOwnProperty("customDef")) {
+			that.currentInstance.customDef = menu["customDef"];
+		}
 	}
 	/***
 	 * 判断属性是否已经存在
@@ -2776,10 +2924,10 @@
 	 * @param msg
 	 */
 	SwaggerBootstrapUi.prototype.log = function (msg) {
-		/*if(window.console){
-            //正式版不开启console功能
-            console.log(msg);
-        }*/
+		// if(window.console){
+  //           //正式版不开启console功能
+  //           console.log(msg);
+  //       }
 	}
 	/***
 	 * 获取菜单元素
@@ -2848,6 +2996,7 @@
 		//权限信息
 		this.securityArrs = new Array();
 		this.statusCode = new Array();
+		this.customDef = new Array();
 	}
 	/***
 	 * 计数器
@@ -2950,7 +3099,7 @@
 		//新增菜单id
 		this.id = "";
 		this.statusCode = new Array();
-
+		this.customDef = new Array();
 	}
 
 	var SwaggerBootstrapUiRefParameter = function () {
