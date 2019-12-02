@@ -19,7 +19,7 @@
 	<link rel="stylesheet" href="webjars/bycdao-ui/highlight/styles/style.css"/>
 	<link rel="stylesheet" href="webjars/bycdao-ui/highlight/styles/default.css"/>
 	<script src="webjars/bycdao-ui/highlight/highlight.pack.js"></script>
-	<script src="webjars/bycdao-ui/jquery/marked.js"></script>
+	<script src="webjars/bycdao-ui/jquery/marked.min.js"></script>
 	<link rel="stylesheet" href="webjars/bycdao-ui/cdao/swaggerbootstrapui.css"/>
 	<link rel="stylesheet" type="text/css" href="webjars/bycdao-ui/iconfont/iconfont.css">
 	<script src="webjars/bycdao-ui/jquery/template-web.js"></script>
@@ -146,7 +146,7 @@
 		</div>
 		<div class="swbu-main" itemprop="articleBody">
 			<div id="txtOffLineDocText"></div>
-            <textarea class='form-control' style='width: 100%;height: 100%;' id="txtOffLineDoc">
+            <textarea class='form-control' style='width: 100%;height: 100%;display: none;' id="txtOffLineDoc">
 # 简介
 
 **标题**：{{title}}
@@ -158,10 +158,19 @@
 **联系人**:{{contact}}
 
 
+<% for( i = 0; i < tags.length; i++) { var tag=tags[i] ; %>
+## <%= tag.name %>
+
+| 接口名称 | 接口url |
+| ------- | ------- |
+<% for( j = 0; j < paths.length; j++) {var path=paths[j]; if(path.tags.indexOf(tag.name)>-1){ %> | <%= path.summary %> | [<%= path.url %>](#/docs/<%= path.url %>) | 
+<%}%><%}%><%}%>
+
+
 
 <% for( i = 0; i < tags.length; i++) { var tag=tags[i] ; %># <%= tag.name %>
 <% for( j = 0; j < paths.length; j++) {var path=paths[j]; if(path.tags.indexOf(tag.name)>-1){ %>
-## <%= path.summary %>
+## (:/docs/<%= path.url %>)<%= path.summary %>
 
 **接口说明**:<%= path.description %>
 
@@ -282,7 +291,7 @@
 {{ if parameters && parameters.length>0 }}
 | 参数名称         | 说明     |     in |  是否必须      |  类型   |  schema  |
 | ------------ | -------------------------------- |-----------|--------|----|--- |
-{{each parameters}}| {{$value.name}}         |      {{$value.description}}   |     {{$value.in}}        |       {{$value.require}}      | {{$value.type}}   | {{$value.schemaValue}}     |
+{{each parameters}}| {{$value.name}}         |      {{$value.description}}   |     {{$value.in}}        |       {{$value.require}}      | {{$value.type}}   | {{if $value.schemaValue}}[{{$value.schemaValue}}](#/menuLi{{showUrl}}/_{{$value.schemaValue}}){{else}} {{/if}}     |
             {{/each}}
 {{else}}
 暂无
@@ -291,11 +300,11 @@
 {{ if refparameters && refparameters.length>0 }}
 **schema属性说明**
   {{each refparameters}}
-**{{$value.name}}**
+** (:/menuLi{{showUrl}}/_{{$value.name}}){{$value.name}} **
 
 | 参数名称         | 说明    |     in |  是否必须   |  类型  |  schema |
 | ------------ | -------------------------------- |-----------|--------|----|--- |{{each $value.params}}
-| {{$value.name}}  | {{$value.description}} |   {{$value.in}}    |   {{$value.require}}   |{{$value.type}}  | {{$value.schemaValue}}      |{{/each}}
+| {{$value.name}}  | {{$value.description}} |   {{$value.in}}    |   {{$value.require}}   |{{$value.type}}  | {{if $value.schemaValue}}[{{$value.schemaValue}}](#/menuLi{{showUrl}}/_{{$value.schemaValue}}){{else}} {{/if}}   |{{/each}}
 {{/each}}
 
 {{/if}}
@@ -317,7 +326,7 @@
 {{ if responseParameters && responseParameters.length>0 }}
 | 参数名称         | 说明                             |    类型 |  schema |
 | ------------ | -------------------|-------|----------- |
-{{each responseParameters}}| {{$value.name}}     |{{$value.description}}      |    {{$value.type}}   |   {{$value.schemaValue}}    |
+{{each responseParameters}}| {{$value.name}}     |{{$value.description}}      |    {{$value.type}}   |   {{if $value.schemaValue}}[{{$value.schemaValue}}](#/menuLi{{showUrl}}/_{{$value.schemaValue}}){{else}} {{/if}}    |
             {{/each}}
 {{else}}
 暂无
@@ -326,7 +335,7 @@
 {{ if responseRefParameters && responseRefParameters.length>0 }}
 **schema属性说明**
   {{each responseRefParameters}}
-**{{$value.name}}**
+** (:/menuLi{{showUrl}}/_{{$value.name}}){{$value.name}} **
 
 | 参数名称         |  说明          |   类型  |  schema |
 | ------------ | ------------------|--------|----------- |
@@ -340,7 +349,8 @@
 {{ if responseCodes}}
 | 状态码         | 说明                             |    schema                         |
 | ------------ | -------------------------------- |---------------------- |
-{{each responseCodes}}| {{$value.code}}         | {{$value.description}}                        |{{$value.schema}}                          |
+{{each responseCodes}}| {{$value.code}}         | {{$value.description}}                        |
+{{$value.schema}}                         |
 {{/each}}
 {{else}}
 暂无
@@ -769,6 +779,36 @@
 **{{tag}}**
 ***
 {{content}}
+	</textarea>
+	</div>
+</script>
+
+<script type="text/html" id="SwaggerBootstrapUICustomDefScript">
+	<div style="width:99%;margin:0px auto;">
+		<div class="alert alert-info" role="alert">
+			提供markdwon格式类型的自定义页面,开发者可通过自定义返回marksdown文档生成该页面.
+		</div>
+	</div>
+	<div class="swbu-main" itemprop="articleBody">
+		<div id="customDef" style="margin: 0 auto; padding: 20px;"></div>
+		<textarea rows="10" cols="10" id="customDefText" style="display: none;">
+
+### 目录
+{{each customDef}}- [{{$value.title}}](#/static/{{$value.title}})
+{{/each}}
+
+{{ if customDef && customDef.length>0 }}
+{{each customDef}}
+(:/static/{{$value.title}}){{$value.title}}
+
+|    值     |   类型    |     说明      |
+| ------------ | ---------------------- | -------------- |
+<% for( b = 0; b < $value.def.length; b++) { var rp=$value.def[b];%>|<%=rp.value%> | <%=rp.type%> | <%=rp.desc%> |
+<%}%>
+{{/each}}
+{{else}}
+暂无
+{{/if}}
 	</textarea>
 	</div>
 </script>

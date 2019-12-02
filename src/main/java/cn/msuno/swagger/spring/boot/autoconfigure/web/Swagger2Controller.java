@@ -25,6 +25,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 import cn.msuno.swagger.spring.boot.autoconfigure.mappers.ServiceModelToSwagger2Mapper;
+import cn.msuno.swagger.spring.boot.autoconfigure.model.CustomDef;
 import cn.msuno.swagger.spring.boot.autoconfigure.model.CustomPage;
 import cn.msuno.swagger.spring.boot.autoconfigure.model.SwaggerVo;
 import io.swagger.models.Swagger;
@@ -50,6 +51,7 @@ public class Swagger2Controller {
     private final JsonSerializer jsonSerializer;
     private final Map<String, String> responseCode;
     private final List<CustomPage> customPage;
+    private final List<CustomDef> customDef;
     
     @Autowired
     public Swagger2Controller(
@@ -57,7 +59,7 @@ public class Swagger2Controller {
             DocumentationCache documentationCache,
             ServiceModelToSwagger2Mapper mapper,
             JsonSerializer jsonSerializer,
-            Map<String, String> responseCode, List<CustomPage> customPage) {
+            Map<String, String> responseCode, List<CustomPage> customPage, List<CustomDef> customDef) {
         
         this.hostNameOverride =
                 environment.getProperty(
@@ -68,6 +70,7 @@ public class Swagger2Controller {
         this.jsonSerializer = jsonSerializer;
         this.responseCode = responseCode;
         this.customPage = customPage;
+        this.customDef = customDef;
     }
     
     @RequestMapping(
@@ -97,6 +100,7 @@ public class Swagger2Controller {
         SwaggerVo vo = new SwaggerVo(swagger);
         vo.setStatusCode(responseCode);
         vo.setCustomPage(customPage);
+        vo.setCustomDef(customDef);
         return new ResponseEntity<Json>(jsonSerializer.toJson(vo), HttpStatus.OK);
     }
     

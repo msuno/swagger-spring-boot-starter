@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
+import cn.msuno.swagger.spring.boot.autoconfigure.model.CustomDef;
 import cn.msuno.swagger.spring.boot.autoconfigure.model.CustomPage;
 import cn.msuno.swagger.spring.boot.autoconfigure.properties.SwaggerProperties;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -118,6 +119,12 @@ public class SwaggerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "customPage")
     public List<CustomPage> customPage() {
+        return Lists.newArrayList();
+    }
+    
+    @Bean
+    @ConditionalOnMissingBean(name = "customDef")
+    public List<CustomDef> customDef() {
         return Lists.newArrayList();
     }
 }
